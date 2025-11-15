@@ -1,49 +1,27 @@
-const API_BASE_URL = "https://fakestoreapi.com";
+const API_BASE_URL = "https://www.thecocktaildb.com/api/json/v1/1";
 
-// Función genérica GET
-export async function getData(endpoint: string) {
+//  Obtener lista de cócteles (solo categoría 'Cocktail')
+export async function getCocktails() {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
-    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-    return await response.json();
+    const response = await fetch(`${API_BASE_URL}/filter.php?c=Cocktail`);
+    if (!response.ok) throw new Error("Error al obtener los cócteles");
+    const data = await response.json();
+    return data.drinks.slice(0, 20); // aca es donde se decide cuantos elementos traer
   } catch (error) {
-    console.error("Error al obtener datos:", error);
+    console.error("Error al obtener los cócteles:", error);
     throw error;
   }
 }
 
-// Función genérica POST
-export async function postData(endpoint: string, data: unknown) {
+// Obtener detalle de un cóctel por ID
+export async function getCocktailDetail(id: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-    return await response.json();
+    const response = await fetch(`${API_BASE_URL}/lookup.php?i=${id}`);
+    if (!response.ok) throw new Error("Error al obtener detalle del cóctel");
+    const data = await response.json();
+    return data.drinks[0];
   } catch (error) {
-    console.error("Error al enviar datos:", error);
+    console.error("Error al obtener detalle del cóctel:", error);
     throw error;
   }
-}
-
-// Función específica para obtener productos
-export async function getProducts() {
-  return getData("/products");
-}
-
-// Función para obtener un producto por ID
-export async function getProductById(id: number) {
-  return getData(`/products/${id}`);
-}
-
-// Función para obtener categorías
-export async function getCategories() {
-  return getData("/products/categories");
-}
-
-// Función para obtener productos por categoría
-export async function getProductsByCategory(category: string) {
-  return getData(`/products/category/${category}`);
 }
