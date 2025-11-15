@@ -1,8 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Info, Zap } from "lucide-react";
+import { useState } from "react";
+import { Home, Info, Zap, Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const { pathname } = useLocation();
+  const [open, setOpen] = useState(false);
 
   const NavLink = ({ to, icon: Icon, label }: { to: string; icon: React.ComponentType<any>; label: string }) => {
     const isActive = pathname === to;
@@ -31,12 +33,33 @@ export default function Navbar() {
           <h1 className="text-2xl font-bold text-white">Examen Desarrollo Web</h1>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4">
           <NavLink to="/" icon={Home} label="Inicio" />
           <NavLink to="/acercade" icon={Info} label="Acerca de" />
           <NavLink to="/consumo" icon={Zap} label="Consumo" />
         </div>
+
+        {/* Mobile hamburger */}
+        <div className="md:hidden">
+          <button
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            onClick={() => setOpen((v) => !v)}
+            className="p-2 rounded-md bg-white/10 hover:bg-white/20 text-white"
+          >
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
+      {/* Mobile menu panel */}
+      {open && (
+        <div className="md:hidden bg-blue-600/95">
+          <div className="container mx-auto px-6 py-4 flex flex-col gap-2">
+            <NavLink to="/" icon={Home} label="Inicio" />
+            <NavLink to="/acercade" icon={Info} label="Acerca de" />
+            <NavLink to="/consumo" icon={Zap} label="Consumo" />
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
